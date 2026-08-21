@@ -1,0 +1,39 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const date = post.data.pubDate.toLocaleDateString("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
+const readingTime = Math.max(
+  1,
+  Math.ceil(post.body.trim().split(/\s+/).length / 220),
+);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <main id="main-content" class="article-page">
+    <a class="back" href="/">← All writing</a>
+    <article class="prose">
+      <header class="article-header">
+        <h1>{post.data.title}</h1>
+        <p>{post.data.description}</p>
+        <div class="article-meta">
+          <time datetime={post.data.pubDate.toISOString()}>{date}</time>
+          <span>{readingTime} min read</span>
+          {post.data.tags.length > 0 && <span>{post.data.tags.join(" · ")}</span>}
+        </div>
+      </header>
+      <Content />
+    </article>
+  </main>
+</BaseLayout>

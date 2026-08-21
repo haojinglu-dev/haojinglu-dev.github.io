@@ -1,0 +1,57 @@
+---
+import { AUTHOR, LINKS, SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+} = Astro.props;
+const pageTitle = title === SITE_TITLE ? title : `${title} — ${SITE_TITLE}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="shell">
+      <header>
+        <a class="name" href="/" aria-label={`${SITE_TITLE}, home`}>
+          <span aria-hidden="true">&gt;_</span>
+          {SITE_TITLE}
+        </a>
+        <nav aria-label="Primary navigation">
+          <a href="/#writing">Writing</a>
+          <a href="/#about">About</a>
+        </nav>
+      </header>
+      <slot />
+      <footer>
+        <span>© {new Date().getFullYear()} {AUTHOR}</span>
+        <div>
+          <a href={LINKS.github} rel="me">GitHub</a>
+          <a href={LINKS.linkedin} rel="me">LinkedIn</a>
+          <a href="/rss.xml">RSS</a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

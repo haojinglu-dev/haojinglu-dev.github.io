@@ -1,0 +1,64 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+const readingTime = (body: string) =>
+  Math.max(1, Math.ceil(body.trim().split(/\s+/).length / 220));
+---
+
+<BaseLayout>
+  <main id="main-content">
+    <section class="intro">
+      <h1>I write about distributed systems, cloud infrastructure, and AI systems.</h1>
+      <p>
+        Practical notes on reliability, architecture, and what it takes to make
+        complex systems easier to understand.
+      </p>
+    </section>
+
+    <section id="writing" class="writing">
+      <div class="section-heading">
+        <h2>Latest writing</h2>
+        <span>{String(posts.length).padStart(2, "0")} essays</span>
+      </div>
+      <div class="post-list">
+        {posts.map((post, index) => (
+          <article>
+            <a href={`/blog/${post.id}/`}>
+              <span class="post-number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+                <div class="post-details">
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {formatDate(post.data.pubDate)}
+                  </time>
+                  <span>{readingTime(post.body)} min read</span>
+                  {post.data.tags[0] && <span>{post.data.tags[0]}</span>}
+                </div>
+              </div>
+              <span class="post-arrow" aria-hidden="true">↗</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <h2>About</h2>
+      <p>
+        I’m Haojing, a software engineer interested in reliable systems and the
+        engineering decisions behind them. This site is my notebook for ideas,
+        lessons, and technical deep dives.
+      </p>
+    </section>
+  </main>
+</BaseLayout>
