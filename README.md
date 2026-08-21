@@ -1,4 +1,4 @@
-# haojing.dev
+# Haojing Lu
 
 A minimal engineering blog built with Astro. Articles are Markdown files and
 the site is ready for GitHub and Cloudflare Pages.
